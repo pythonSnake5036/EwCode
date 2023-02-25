@@ -16,7 +16,7 @@ Command breakdown:
 | ----------- | ----------- |
 | `docker run`| Starts docker to run the container |
 |    `--rm`   | Removes the container after running |
-| `-v $(pwd):/src`| Bind mounts your current directory to the `/src` directory on the contaainer. If you are on windows, type the full path of your current working directory |
+| `-v $(pwd):/src`| Bind mounts your current directory to the `/src` directory on the container. If you are on windows, type the full path of your current working directory |
 | `ghcr.io/pythonsnake5036/ewcode:latest` | The name of the container to run |
 | `${NAME_FILE}` | The name of the `.ecr` file to run |
 
