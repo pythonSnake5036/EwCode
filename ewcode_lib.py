@@ -63,6 +63,13 @@ class Command:
     def execute(self):
         return None
 
+class MinArgsCommand(Command):
+    def __init__(self, args):
+        if self.arguments <= len(args):
+            self.args = args
+        else:
+            raise InvalidArgumentException(f"{self.arguments} : {len(args)}")
+
 class Print(Command):
     arguments = -1
     def get_usage():
@@ -72,12 +79,20 @@ class Print(Command):
             print(i, end="")
         print()
 
-class Set(Command):
+class Set(MinArgsCommand):
     arguments = 2
     def get_usage():
         return "set"
     def execute(self):
-        variables[self.args[0]] = self.args[1]
+        final = deepcopy(self.args)
+        final.pop(0)
+        try:
+            final = "".join(final)
+        except TypeError:
+            for i in range(len(final)):
+                final[i] = str(final[i])
+            final = "".join(final)
+        variables[self.args[0]] = final
 
 class Input(Command):
     arguments = 2
@@ -130,10 +145,20 @@ class Import(Command):
         return "import"
     def execute(self):
         global commands
-        filepath = sys.argv[1].split("\\")
-        path = filepath[len(filepath)-2]
+        filepath = os.path.abspath(sys.argv[1]).split("\\")
+        if len(sys.argv[1].split("\\")) == 1:
+            path = os.curdir
+        else:
+            filepath.pop(len(filepath)-1)
+            path = "\\".join(filepath)
+        module_path = os.path.abspath(sys.argv[0]).split("\\")
+        module_path.pop(len(module_path)-1)
+        module_path.append("modules")
+        module_path = "\\".join(module_path)
+        sys.path.append(module_path)
         sys.path.append(os.path.abspath(path))
-        commands = commands+__import__(self.args[0]).export
+        module = __import__(self.args[0])
+        commands = commands+module.exports
 
 class InvalidArgumentException (Exception):
     pass
