@@ -1,46 +1,17 @@
 from argparse import ArgumentParser
-from ewcode_lib import Execute
 from ewcode_lexer import Lex
-from zipfile import ZipFile
-import tempfile
-import shutil
-import pickle
+from ewcode_js import convert2js
 import sys
-import os
+import subprocess
 
 __version__ = "0.5.0"
 credits = f"Ewcode v{__version__} by EnderixMC (https://github.com/EnderixMC/EwCode)"
 
 def compile(name):
-    with open(name+".ecr", "r") as f:
+    with open(name, "r") as f:
         raw = f.read()
     data = Lex(raw)
-    with ZipFile(name+".ewc", "w") as zipfile:
-        with zipfile.open("main", "w") as f:
-            pickle.dump(data, f)
-        with zipfile.open("code.properties", "w") as f:
-            f.write(f"version={__version__}".encode("utf"))
-
-def run(name):
-    path = os.path.join(tempfile.gettempdir(),name+"_ecode")
-    with ZipFile(name, "r") as zipfile:
-        zipfile.extractall(path)
-    has_ver = False
-    with open(os.path.join(path,"code.properties"), "r") as f:
-        for l in f.readlines():
-            if l.startswith("version="):
-                if l[8:] == __version__:
-                    has_ver = True
-                    break
-                else:
-                    raise Exception(f"Incorrect version!\nEwCode version: {__version__}\nFile version: {l[8:]}")
-    with open(os.path.join(path,"main"), "rb") as f:
-        if not has_ver:
-            print("[Warning]: This file contains no version. The code inside might be incompatible")
-        #for i in pickle.load(f):
-        #    print(i)
-        Execute(pickle.load(f))
-    shutil.rmtree(path)
+    return data
 
 if __name__ == "__main__":
     parser = ArgumentParser()
@@ -49,8 +20,11 @@ if __name__ == "__main__":
     parser.add_argument("file")
     args = parser.parse_args()
     try:
-        compile(args.file.replace(".ecr",""))
-        run(args.file.replace(".ecr",".ewc"))
+        data = compile(args.file)
+        js = convert2js(data).encode()
+        p = subprocess.run(['node'], stdout=subprocess.PIPE,
+        input=js)
+        print(p.stdout.decode(),end='')
     except Exception as e:
         print("[Error]:", e)
         raise e # REMOVE LATER

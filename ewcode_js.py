@@ -23,17 +23,12 @@ func_converters = {
     "print": func_print
 }
 
-name = sys.argv[1]
+def convert2js(ewcode):
+    out = ""
 
-with open(name, "r") as f:
-    raw = f.read()
-data = Lex(raw)
+    for line in ewcode:
+        func = line[0]
+        assert func[0] == 'FUNC'
+        out += func_converters[func[1]](line)
 
-out = ""
-
-for line in data:
-    func = line[0]
-    assert func[0] == 'FUNC'
-    out += func_converters[func[1]](line)
-
-print(out)
+    return out
