@@ -1,6 +1,5 @@
 from argparse import ArgumentParser
 from ewcode_lexer import Lex
-from ewcode_js import convert2js
 import sys
 import subprocess
 
@@ -18,13 +17,16 @@ if __name__ == "__main__":
     parser.add_argument('-v', '--version', action='version', version=f"EwCode {__version__}")
     parser.add_argument('--credits', action='version', version=credits)
     parser.add_argument("file")
+    parser.add_argument("runtime")
     args = parser.parse_args()
     try:
         data = compile(args.file)
-        js = convert2js(data).encode()
-        p = subprocess.run(['node'], stdout=subprocess.PIPE,
-        input=js)
-        print(p.stdout.decode(),end='')
+        if args.runtime == "node":
+            from transpilers.javascript_node import convert2js
+            print(convert2js(data))
+        # p = subprocess.run(['node'], stdout=subprocess.PIPE,
+        # input=js)
+        # print(p.stdout.decode(),end='')
     except Exception as e:
         print("[Error]:", e)
         raise e # REMOVE LATER

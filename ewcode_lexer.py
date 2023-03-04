@@ -1,4 +1,5 @@
 import re
+import json
 
 def Lex(raw):
     raw = raw.split("\n")
@@ -149,3 +150,10 @@ def lex_custom_func(raw, i):
         inner.append(i)
     lexed = Lex("\n".join(inner))
     return "CUSTOM_FUNC", [raw[0],lexed], len(inner)+1
+
+if __name__ == "__main__":
+    import sys
+    with open(sys.argv[1], "r") as f:
+        raw = f.read()
+    lexed = Lex(raw)
+    print(lexed)
