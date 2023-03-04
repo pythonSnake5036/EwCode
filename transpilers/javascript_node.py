@@ -15,7 +15,7 @@ def arg_num(dat):
 def arg_func(dat):
     return _code2js(dat[1])
 
-def arg_equ(dat):
+def arg_load_vars(dat):
     equ = dat[1]
     eq = re.sub("\\{([a-z0-9_])\\}", "variables[\"\\1\"]", equ)
     return eq
@@ -65,8 +65,14 @@ def func_looprange(func):
     js = f"for (var i = 0; i < {times}; i++) {{\n{body}}}\n"
     return js
 
+def func_if(func):
+    equ = get_arg(func[1])
+    func_body = get_arg(func[2])
+    js = f"if ({equ}) {{\n{func_body}}}\n"
+    return js
+
 def custom_func(func):
-    func_name = func[0]
+    func_name = get_arg(func[0])
     func_body = _code2js(func[1])
     js = f"function {func_name}() {{\n{func_body}}}\n"
     return js
@@ -76,7 +82,8 @@ arg_converters = {
     "STR": arg_str,
     "NUM": arg_num,
     "FUNC": arg_func,
-    "EQU": arg_equ
+    "EQU": arg_load_vars,
+    "BOOL": arg_load_vars
 }
 
 func_converters = {
@@ -85,7 +92,8 @@ func_converters = {
     "input": func_input,
     "random": func_random,
     "call": func_call,
-    "looprange": func_looprange
+    "looprange": func_looprange,
+    "if": func_if
 }
 
 def _code2js(ewcode):
