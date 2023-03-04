@@ -1,6 +1,13 @@
 # EwCode
 The most disgusting programming language!
 
+# Changes
+This fork of EwCode replaces the Python interpeter with a JavaScript transpiler. This improves performance.
+
+However, imports are currently not supported, and booleans have a larger range of possibilities.
+
+For example, `1+1={a}` was not allowed in vanilla EwCode, but is allowed in this version.
+
 ## Requirements
 - NodeJS
 
