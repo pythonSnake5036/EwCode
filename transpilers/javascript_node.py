@@ -1,4 +1,5 @@
 import sys
+import re
 
 # An experimental ewcode to javascript converter
 
@@ -11,38 +12,46 @@ def arg_str(dat):
 def arg_num(dat):
     return dat[1]
 
-def get_arg(arg):
-    return arg_converters[arg[0]](arg)
-
 def arg_func(dat):
     return _code2js(dat[1])
+
+def arg_equ(dat):
+    equ = dat[1]
+    eq = re.sub("\\{([a-z0-9_])\\}", "variables[\"\\1\"]", equ)
+    return eq
+
+def get_arg(arg):
+    return arg_converters[arg[0]](arg)
 
 def func_print(func):
     js = "console.log("
     for i, v in enumerate(func[1:]):
-        js += get_arg(v)
+        js += f"({get_arg(v)})"
         if i < len(func)-2:
             js += " + "
     js += ");\n"
     return js
 
+def var_set(var_name):
+    return f"variables[\"{var_name}\"]"
+
 def func_set(func):
     var_name = func[1][1]
     var_value = get_arg(func[2])
-    js = f"variables[\"{var_name}\"] = {var_value};\n"
+    js = f"{var_set(var_name)} = {var_value};\n"
     return js
 
 def func_input(func):
     var_name = func[1][1]
     prompt = get_arg(func[2])
-    js = f"{var_name} = await prompt({prompt});\n"
+    js = f"{var_set(var_name)} = await prompt({prompt});\n"
     return js
 
 def func_random(func):
     var_name = func[1][1]
     low = get_arg(func[2])
     high = get_arg(func[3])
-    js = f"{var_name} = random({low}, {high});\n"
+    js = f"{var_set(var_name)} = random({low}, {high});\n"
     return js
 
 def func_call(func):
@@ -66,7 +75,8 @@ arg_converters = {
     "VAR": arg_var,
     "STR": arg_str,
     "NUM": arg_num,
-    "FUNC": arg_func
+    "FUNC": arg_func,
+    "EQU": arg_equ
 }
 
 func_converters = {
