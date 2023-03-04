@@ -1,18 +1,15 @@
 from MathEval import calculate
 from random import randint
 from copy import deepcopy
-from time import sleep
 import sys
 import os
 import re
 
 commands = []
 
-delay = 0.01
 def Execute(code_tmp):
     code = list(code_tmp)
     for i in code:
-        sleep(delay)
         if i[0][0] == "CUSTOM_FUNC":
             functions[i[0][1][0]] = i[0][1][1]
             continue
