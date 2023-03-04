@@ -65,6 +65,12 @@ def func_looprange(func):
     js = f"for (var i = 0; i < {times}; i++) {{\n{body}}}\n"
     return js
 
+def func_loop(func):
+    equ = get_arg(func[1])
+    body = get_arg(func[2])
+    js = f"while ({equ}) {{\n{body}}}\n"
+    return js
+
 def func_if(func):
     equ = get_arg(func[1])
     func_body = get_arg(func[2])
@@ -72,7 +78,7 @@ def func_if(func):
     return js
 
 def custom_func(func):
-    func_name = get_arg(func[0])
+    func_name = func[0]
     func_body = _code2js(func[1])
     js = f"function {func_name}() {{\n{func_body}}}\n"
     return js
@@ -93,6 +99,7 @@ func_converters = {
     "random": func_random,
     "call": func_call,
     "looprange": func_looprange,
+    "loop": func_loop,
     "if": func_if
 }
 
