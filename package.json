@@ -1,0 +1,22 @@
+{
+  "name": "ewcode-js",
+  "version": "1.0.0",
+  "description": "The most disgusting programming language!",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pythonSnake5036/EwCode-JS.git"
+  },
+  "author": "",
+  "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/pythonSnake5036/EwCode-JS/issues"
+  },
+  "homepage": "https://github.com/pythonSnake5036/EwCode-JS#readme"
+}
